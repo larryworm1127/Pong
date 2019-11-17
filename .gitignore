@@ -1,60 +1,315 @@
+# intermediate build files
+*.bgn
+*.bit
+*.bld
+*.cmd_log
+*.drc
+*.ll
+*.lso
+*.msd
+*.msk
+*.ncd
+*.ngc
+*.ngd
+*.ngr
+*.pad
+*.par
+*.pcf
+*.prj
+*.ptwx
+*.rbb
+*.rbd
+*.stx
+*.syr
+*.twr
+*.twx
+*.unroutes
+*.ut
+*.xpi
+*.xst
+*_bitgen.xwbt
+*_envsettings.html
+*_map.map
+*_map.mrp
+*_map.ngm
+*_map.xrpt
+*_ngdbuild.xrpt
+*_pad.csv
+*_pad.txt
+*_par.xrpt
+*_summary.html
+*_summary.xml
+*_usage.xml
+*_xst.xrpt
 
-# Created by https://www.gitignore.io/api/alteraquartusii
-# Edit at https://www.gitignore.io/?templates=alteraquartusii
+# iMPACT generated files
+_impactbatch.log
+impact.xsl
+impact_impact.xwbt
+ise_impact.cmd
+webtalk_impact.xml
 
-### AlteraQuartusII ###
-##list taken from http://www.alterawiki.com/wiki/Version_Control (01.10.2015)
+# Core Generator generated files
+xaw2verilog.log
 
-######### Quartus II source files
+# project-wide generated files
+*.gise
+par_usage_statistics.html
+usage_statistics_webtalk.html
+webtalk.log
+webtalk_pn.xml
 
-# project files:
-### project_name.qpf Quartus II project file
-### project_name.qsf Quartus constraint file (lists the hardware constraints defined for a project, from the used chip and pinout to timing constraints)
-### project_name.qws Quartus Window Settings ? (the configuration of the Quartus gui for the project, may be omitted)
+# generated folders
+iseconfig/
+xlnx_auto_0_xdb/
+xst/
+_ngo/
+_xmsgs/
 
-# top level source files:
-### project_name.bdf Block diagram / Schematic file (top level schematic file, there may be many nested files)
-### project_name.vhd VHDL file (top level VHDL file)
-### project_name.v Verilog file (top level Verilog file)
 
-# component source files:
-### component_name.bsf Block Symbol file (component symbol file)
-### component_name.vhd VHDL file (top level VHDL file)
-### component_name.v Verilog file (top level Verilog file)
+## Mac DS Store
+*.DS_Store
+## Core latex/pdflatex auxiliary files:
+*.aux
+*.lof
+*.log
+*.lot
+*.fls
+*.out
+*.toc
+*.fmt
+*.fot
+*.cb
+*.cb2
+.*.lb
 
-# SOPC builder project source files (SOPC builder creates many VHDL or Verilog files, that you do not need to store)
-### sopc_project_name.ptf the list and configuration of components selected in the SOPC gui
-### sopc_project_name.bsf Block Symbol file (SOPC component symbol file, especially if you modified it)
+## Intermediate documents:
+*.dvi
+*.xdv
+*-converted-to.*
+# these rules might exclude image files for figures etc.
+# *.ps
+# *.eps
+# *.pdf
 
-# Board Description (if you created your own board, the list is incomplete!)
-### board_name/class.ptf
+## Generated if empty string is given at "Please type another file name for output:"
+.pdf
 
-# software source files:
-### tbd
+## Bibliography auxiliary files (bibtex/biblatex/biber):
+*.bbl
+*.bcf
+*.blg
+*-blx.aux
+*-blx.bib
+*.run.xml
 
-######## Quartus II binary files
+## Build tool auxiliary files:
+*.fdb_latexmk
+*.synctex
+*.synctex(busy)
+*.synctex.gz
+*.synctex.gz(busy)
+*.pdfsync
 
-# hardware binary files
-### project_name.sof SRAM Object File
+## Auxiliary and intermediate files from other packages:
+# algorithms
+*.alg
+*.loa
 
-# software binary files
+# achemso
+acs-*.bib
 
-/*
-!/*.gitignore
-##
-!*.qpf
-!*.qsf
-!*.qws
-!*.bdf
-!*.vhd
-!*.v
-!*.ptf
-!*.bsf
-!**/class.ptf
-!*.tbd
-!*.sof
-## tbd
+# amsthm
+*.thm
 
-!*.tcl
+# beamer
+*.nav
+*.pre
+*.snm
+*.vrb
 
-# End of https://www.gitignore.io/api/alteraquartusii
+# changes
+*.soc
+
+# cprotect
+*.cpt
+
+# elsarticle (documentclass of Elsevier journals)
+*.spl
+
+# endnotes
+*.ent
+
+# fixme
+*.lox
+
+# feynmf/feynmp
+*.mf
+*.mp
+*.t[1-9]
+*.t[1-9][0-9]
+*.tfm
+
+#(r)(e)ledmac/(r)(e)ledpar
+*.end
+*.?end
+*.[1-9]
+*.[1-9][0-9]
+*.[1-9][0-9][0-9]
+*.[1-9]R
+*.[1-9][0-9]R
+*.[1-9][0-9][0-9]R
+*.eledsec[1-9]
+*.eledsec[1-9]R
+*.eledsec[1-9][0-9]
+*.eledsec[1-9][0-9]R
+*.eledsec[1-9][0-9][0-9]
+*.eledsec[1-9][0-9][0-9]R
+
+# glossaries
+*.acn
+*.acr
+*.glg
+*.glo
+*.gls
+*.glsdefs
+
+# gnuplottex
+*-gnuplottex-*
+
+# gregoriotex
+*.gaux
+*.gtex
+
+# htlatex
+*.4ct
+*.4tc
+*.idv
+*.lg
+*.trc
+*.xref
+
+# hyperref
+*.brf
+
+# knitr
+*-concordance.tex
+# TODO Comment the next line if you want to keep your tikz graphics files
+*.tikz
+*-tikzDictionary
+
+# listings
+*.lol
+
+# makeidx
+*.idx
+*.ilg
+*.ind
+*.ist
+
+# minitoc
+*.maf
+*.mlf
+*.mlt
+*.mtc[0-9]*
+*.slf[0-9]*
+*.slt[0-9]*
+*.stc[0-9]*
+
+# minted
+_minted*
+*.pyg
+
+# morewrites
+*.mw
+
+# nomencl
+*.nlg
+*.nlo
+*.nls
+
+# pax
+*.pax
+
+# pdfpcnotes
+*.pdfpc
+
+# sagetex
+*.sagetex.sage
+*.sagetex.py
+*.sagetex.scmd
+
+# scrwfile
+*.wrt
+
+# sympy
+*.sout
+*.sympy
+sympy-plots-for-*.tex/
+
+# pdfcomment
+*.upa
+*.upb
+
+# pythontex
+*.pytxcode
+pythontex-files-*/
+
+# thmtools
+*.loe
+
+# TikZ & PGF
+*.dpth
+*.md5
+*.auxlock
+
+# todonotes
+*.tdo
+
+# easy-todo
+*.lod
+
+# xmpincl
+*.xmpi
+
+# xindy
+*.xdy
+
+# xypic precompiled matrices
+*.xyc
+
+# endfloat
+*.ttt
+*.fff
+
+# Latexian
+TSWLatexianTemp*
+
+## Editors:
+# WinEdt
+*.bak
+*.sav
+
+# Texpad
+.texpadtmp
+
+# Kile
+*.backup
+
+# KBibTeX
+*~[0-9]*
+
+# auto folder when using emacs and auctex
+./auto/*
+*.el
+
+# expex forward references with \gathertags
+*-tags.tex
+
+# standalone packages
+*.sta
+
+# generated if using elsarticle.cls
+*.spl
+
+.onetoc2

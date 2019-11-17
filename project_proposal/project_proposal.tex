@@ -1,0 +1,96 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath, amsfonts, amsthm, amssymb, setspace, tabularx}
+\usepackage[margin=2.5cm]{geometry}
+\newcommand{\tabitem}{~~\llap{\textbullet}~~}
+
+\title{CSC258H1 Project Proposal}
+\author{Larry Shi, Henry He Wang}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\onehalfspacing
+\setlength\parindent{0pt}
+
+\section*{Project Milestones}
+
+\textbf{Project Name:} Pong.
+
+\textbf{Description:} Pong is a 2-dimensional graphics game involving two players controlling two rectangular paddles at each side of the screen with a ball bouncing between the paddles. A player scores a point whenever the opponent fails to deflect the ball. The player that reaches 11 points first is the winner.
+
+\singlespacing
+
+\textbf{Milestone 1:}
+\begin{itemize}
+	\item Add code to display the two paddles for each player at each side of the screen.
+    \item Add keyboard inputs to allow the paddles to be moved up and down vertically.
+    \item (Milestone 1 evaluation) By the end of milestone 1, the user should be able to see the two paddles at each end of the screen and move them up and down within the screen boundary.
+\end{itemize}
+
+\textbf{Milestone 2:}
+\begin{itemize}
+	\item Add code to display the ball at the center of the screen upon starting the game.
+    \item Implement a coordinate system which will allow the ball to move randomly and for collision detection between the ball, paddles and screen boundary
+	\item (Milestone 2 evaluation) By the end of milestone 2, the user should be able to see the ball bouncing around on the screen with the correct change of direction whenever it touches the boundary of the screen or a paddle.
+\end{itemize}
+
+\textbf{Milestone 3:}
+\begin{itemize}
+	\item Add code to track player scores.
+	\item Add code to display winner (First to 11 points).
+	\item Add FSM to create transitions between initial display state, play state, and end state.
+	\item (Milestone 3 evaluation) By the end of milestone 3, the user should be able to play the game of pong with a correct score tracking system. Also, the game should correctly update the score when the ball fails to hit the paddle as well as correctly transition from state to state to allow better user experience and information display.
+\end{itemize}
+
+
+\onehalfspacing
+\section*{Project Motivation}
+
+\textbf{How does this project relate to material covered in CSC258?}
+
+We will be using FSM, Datapath, VGA adapter, registers, adders, ALU, mux, comparators and counters in our project. See the below for implementation specifications.
+
+\singlespacing
+
+\noindent\fbox{
+    \parbox{\textwidth}{
+		\textbf{Milestone 1}
+		\begin{itemize}
+			\item FSM, Datapath and VGA adapter to display graphics (paddles and screen background).
+			\item Import keyboard resources to handle paddle movement.
+		\end{itemize}
+
+		\rule{1.015\textwidth}{0.4pt}
+
+		\textbf{Milestone 2}
+		\begin{itemize}
+			\item Register to track coordinate position (Cartesian coordinate) of the ball.
+			\item Adders, ALU, and mux to update the coordinates of the ball, paddles accordingly.
+			\item Comparators to verify the location of the ball with respect to paddles and boundary (collision detection).
+		\end{itemize}
+
+		\rule{1.015\textwidth}{0.4pt}
+
+		\textbf{Milestone 3}
+		\begin{itemize}
+			\item Register and counter to track and update the player scores.
+			\item Comparator to compare if the score is equal to 11, this should be checked after each point gained.
+		\end{itemize}
+	}
+}
+
+\onehalfspacing
+\hspace{0pt}
+
+\textbf{What’s cool about this project?}
+
+Pong is a game that involves user inputs, movements on the screen, as well as the interaction between several game objects. This game allows us to employ several concepts that we learned in class such as FSM, ALU and counters in the project, which would allow us to greatly enhance our knowledge of the course. \\
+
+
+\textbf{Why does the idea of working on this appeal to you personally?}
+
+Pong has always been a very popular game worldwide. One of us has personally implemented many versions of the game using higher-level programming languages such as Python. But after taking CSC258 and learning about how the computer works at a lower level, it would be interesting to implement it again in Verilog using logic devices to better help us understand how the higher-level implementation works.
+
+\end{document}
