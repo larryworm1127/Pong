@@ -61,6 +61,7 @@ module pong
 
 endmodule
 
+
 //resets during one clock cycle
 module resetOneTick(clock, resetn);
 	input clock;
@@ -73,6 +74,8 @@ module resetOneTick(clock, resetn);
 
 endmodule
 
+
+// Handles keyboard input
 module keyboard();
 
 	keyboard_tracker #(.PULSE_OR_HOLD(1)) k1();
