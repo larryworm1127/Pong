@@ -26,7 +26,14 @@ module pong
 	output	[9:0]	VGA_G;	 				//	VGA Green[9:0]
 	output	[9:0]	VGA_B;   				//	VGA Blue[9:0]
 
-
+	wire resetn;
+	assign resetn = KEY[0];
+	
+	// Create the colour, x, y and writeEn wires that are inputs to the controller.
+	wire [2:0] colour;
+	wire [7:0] x;
+	wire [6:0] y;
+	wire writeEn;
 
 	// Create an Instance of a VGA controller - there can be only one!
 	// Define the number of colours as well as the initial background
@@ -54,6 +61,17 @@ module pong
 
 endmodule
 
+//resets during one clock cycle
+module resetOneTick(clock, resetn);
+	input clock;
+	output resetn;
+
+	always @(posedge)
+		begin
+			
+		end
+
+endmodule
 
 module keyboard();
 
