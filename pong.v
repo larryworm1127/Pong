@@ -12,10 +12,15 @@ module pong
 		VGA_SYNC_N,						//	VGA SYNC
 		VGA_R,   						//	VGA Red[9:0]
 		VGA_G,	 						//	VGA Green[9:0]
-		VGA_B   						//	VGA Blue[9:0]
+		VGA_B,   						//	VGA Blue[9:0]
+		// The ports below are for the PS/2 serial port.
+		PS2_CLK,
+		PS2_DAT
 	);
 
-	intput CLOCK_50;
+	input CLOCK_50;
+	input PS2_CLK;
+	input PS2_DAT;
 	// Do not change the following outputs
 	output			VGA_CLK;   				//	VGA Clock
 	output			VGA_HS;					//	VGA H_SYNC
@@ -76,8 +81,25 @@ endmodule
 
 
 // Handles keyboard input
-module keyboard();
+module keyboard(
+	input clock,
+	input resetn,
+	input PS2_CLK,
+	input PS2_DAT
+	);
 
-	keyboard_tracker #(.PULSE_OR_HOLD(1)) k1();
+	wire key_w, key_s, key_up, key_down, key_space;
+
+	keyboard_tracker #(.PULSE_OR_HOLD(0)) k1(
+		.clock  (clock),
+		.reset  (resetn),
+		.PS2_CLK(PS2_CLK),
+		.PS2_DAT(PS2_DAT),
+		.w      (key_w),
+		.s      (key_s),
+		.up     (key_up),
+		.down   (key_down),
+		.space  (key_space)
+		);
 
 endmodule
