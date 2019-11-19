@@ -8,7 +8,7 @@ module pong
 		VGA_CLK,   						//	VGA Clock
 		VGA_HS,							//	VGA H_SYNC
 		VGA_VS,							//	VGA V_SYNC
-		VGA_BLANK_N,						//	VGA BLANK
+		VGA_BLANK_N,					//	VGA BLANK
 		VGA_SYNC_N,						//	VGA SYNC
 		VGA_R,   						//	VGA Red[9:0]
 		VGA_G,	 						//	VGA Green[9:0]
@@ -25,7 +25,7 @@ module pong
 	output			VGA_CLK;   				//	VGA Clock
 	output			VGA_HS;					//	VGA H_SYNC
 	output			VGA_VS;					//	VGA V_SYNC
-	output			VGA_BLANK_N;				//	VGA BLANK
+	output			VGA_BLANK_N;			//	VGA BLANK
 	output			VGA_SYNC_N;				//	VGA SYNC
 	output	[9:0]	VGA_R;   				//	VGA Red[9:0]
 	output	[9:0]	VGA_G;	 				//	VGA Green[9:0]
@@ -59,7 +59,7 @@ module pong
 			.VGA_BLANK(VGA_BLANK_N),
 			.VGA_SYNC(VGA_SYNC_N),
 			.VGA_CLK(VGA_CLK));
-		defparam VGA.RESOLUTION = "160x120";
+		defparam VGA.RESOLUTION = "320x240";
 		defparam VGA.MONOCHROME = "FALSE";
 		defparam VGA.BITS_PER_COLOUR_CHANNEL = 1;
 		defparam VGA.BACKGROUND_IMAGE = "black.mif";
@@ -88,7 +88,7 @@ module keyboard(
 	input PS2_DAT
 	);
 
-	wire key_w, key_s, key_up, key_down, key_space;
+	wire key_w, key_s, key_up, key_down, key_space, key_enter;
 
 	keyboard_tracker #(.PULSE_OR_HOLD(0)) k1(
 		.clock  (clock),
@@ -99,7 +99,8 @@ module keyboard(
 		.s      (key_s),
 		.up     (key_up),
 		.down   (key_down),
-		.space  (key_space)
+		.space  (key_space),
+		.enter  (key_enter)
 		);
 
 endmodule

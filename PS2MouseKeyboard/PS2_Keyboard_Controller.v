@@ -125,8 +125,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 	 output w, s,
 	 // output left, right, up, down,
 	 output up, down,
-	 // output space, enter
-	 output space
+	 output space, enter
 	 );
 	 
 	 // A flag indicating when the keyboard has sent a new byte.
@@ -154,7 +153,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 				UP_CODE    = 8'h75,
 				DOWN_CODE  = 8'h72,
 				SPACE_CODE = 8'h29,
-				// ENTER_CODE = 8'h5a;
+				ENTER_CODE = 8'h5a;
 					
     reg [1:0] curr_state;
 	 
@@ -165,8 +164,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
     reg w_press, s_press;
 	// reg left_press, right_press, up_press, down_press;
 	reg up_press, down_press;
-	// reg space_press, enter_press;
-	reg space_press;
+	reg space_press, enter_press;
 	 
 	// Lock signals prevent a key press signal from going high for more than one
 	// clock tick when pulse mode is enabled. A key becomes 'locked' as soon as
@@ -176,8 +174,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 	reg w_lock, s_lock;
 	// reg left_lock, right_lock, up_lock, down_lock;
 	reg up_lock, down_lock;
-	// reg space_lock, enter_lock;
-	reg space_lock;
+	reg space_lock, enter_lock;
 	 
 	// Output is equal to the key press wires in mode 0 (hold), and is similar in
 	// mode 1 (pulse) except the signal is lowered when the key's lock goes high.
@@ -193,7 +190,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
     assign down  = down_press && ~(down_lock && PULSE_OR_HOLD);
 
     assign space = space_press && ~(space_lock && PULSE_OR_HOLD);
-    // assign enter = enter_press && ~(enter_lock && PULSE_OR_HOLD);
+    assign enter = enter_press && ~(enter_lock && PULSE_OR_HOLD);
 	 
 	 // Core PS/2 driver.
 	PS2_Controller #(.INITIALIZE_MOUSE(0)) core_driver(
@@ -226,7 +223,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 		down_lock <= down_press;
 		
 		space_lock <= space_press;
-		// enter_lock <= enter_press;
+		enter_lock <= enter_press;
 		  
 	    if (~reset) begin
 		    curr_state <= MAKE;
@@ -241,7 +238,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 			up_press    <= 1'b0;
 			down_press  <= 1'b0;
 			space_press <= 1'b0;
-			// enter_press <= 1'b0;
+			enter_press <= 1'b0;
 			
 			w_lock <= 1'b0;
 			// a_lock <= 1'b0;
@@ -252,7 +249,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 			up_lock    <= 1'b0;
 			down_lock  <= 1'b0;
 			space_lock <= 1'b0;
-			// enter_lock <= 1'b0;
+			enter_lock <= 1'b0;
         end
 	    else if (byte_received) begin
 	        // Respond to the newest byte received from the keyboard,
@@ -271,7 +268,7 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 				DOWN_CODE:  down_press  <= curr_state == MAKE;
 				
 				SPACE_CODE: space_press <= curr_state == MAKE;
-				// ENTER_CODE: enter_press <= curr_state == MAKE;
+				ENTER_CODE: enter_press <= curr_state == MAKE;
 
 				// State transition logic.
 				// An F0 signal indicates a key is being released. An E0 signal
@@ -282,8 +279,8 @@ module keyboard_tracker #(parameter PULSE_OR_HOLD = 0) (
 	        endcase
         end
         else begin
-		      // Default case if no byte is received.
-		      curr_state <= curr_state;
+		    // Default case if no byte is received.
+		    curr_state <= curr_state;
 		end
     end
 endmodule
