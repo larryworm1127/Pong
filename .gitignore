@@ -1,70 +1,56 @@
-# intermediate build files
-*.bgn
-*.bit
-*.bld
-*.cmd_log
-*.drc
-*.ll
-*.lso
-*.msd
-*.msk
-*.ncd
-*.ngc
-*.ngd
-*.ngr
-*.pad
-*.par
-*.pcf
-*.prj
-*.ptwx
-*.rbb
-*.rbd
-*.stx
-*.syr
-*.twr
-*.twx
-*.unroutes
-*.ut
-*.xpi
-*.xst
-*_bitgen.xwbt
-*_envsettings.html
-*_map.map
-*_map.mrp
-*_map.ngm
-*_map.xrpt
-*_ngdbuild.xrpt
-*_pad.csv
-*_pad.txt
-*_par.xrpt
-*_summary.html
-*_summary.xml
-*_usage.xml
-*_xst.xrpt
+# A gitignore for Altera Quartus II that tries to ignore almost all of the
+# automatically Quartus-generated files. This primarily leaves the project,
+# settings, source, and constraint files to be added. The files ignored do not
+# include the bulk of the MegaFunction Wizard generated files which enables
+# a cloned repository to be used (usually) immediately without regenerating
+# Altera IP blocks.
 
-# iMPACT generated files
-_impactbatch.log
-impact.xsl
-impact_impact.xwbt
-ise_impact.cmd
-webtalk_impact.xml
+# Need to keep all HDL files and timing constraint files
+# *.vhd
+# *.v
+# *.sdc
 
-# Core Generator generated files
-xaw2verilog.log
+# ignore Quartus II generated folders
+*_sim
+db
+greybox_tmp
+incremental_db
+simulation
+testbench
+timing
+work
+output_files
 
-# project-wide generated files
-*.gise
-par_usage_statistics.html
-usage_statistics_webtalk.html
-webtalk.log
-webtalk_pn.xml
 
-# generated folders
-iseconfig/
-xlnx_auto_0_xdb/
-xst/
-_ngo/
-_xmsgs/
+# ignore Quartus II generated files
+*_generation_script*
+*_inst.vhd
+*.bak
+*.cmp
+*.done
+*.eqn
+*.hex
+*.html
+*.jdi
+*.mif
+*.pin
+*.pof
+*.ptf.*
+*.qar
+*.qarlog
+*.qws
+*.rpt
+*.smsg
+*.sof
+*.sopc_builder
+*.summary
+*.tcl
+*.txt # Explicitly add any text files used
+*~
+*example*
+*sopc_*
+*.wlf
+PLLJ_PLLSPE_INFO.txt # The generated PLL specification file
 
 
 ## Mac DS Store
@@ -313,3 +299,6 @@ TSWLatexianTemp*
 *.spl
 
 .onetoc2
+
+work/
+vsim.wlf

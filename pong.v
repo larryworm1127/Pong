@@ -39,8 +39,7 @@ module pong
 	wire [8:0] x;
 	wire [7:0] y; 
 	wire writeEn;
-
-	// erase
+	wire load_en;
 
 	// Create keys detectors
 	wire key_w, key_s, key_up, key_down, key_space, key_enter;
@@ -89,9 +88,8 @@ module pong
 	datapath paddle1(
 		.x_in      (0),
 		.y_in      (0),
-		.colour_in (colour_in),
 		.resetn    (resetn),
-		.enable    (enable),
+		.enable    (writeEn),
 		.clk       (CLOCK_50),
 		.down      (key_down),
 		.up        (key_up),
@@ -99,17 +97,18 @@ module pong
 		.right     (key_right),
 		.x_out     (x),
 		.y_out     (y),
-		.colour_out(colour_out),
 		.do_erase  (paddle1_erase)
 	);
 
 	// Instantiate FSM control
 	control paddleControl1(
-		.clk   (clk),
-		.resetn(resetn),
-		.go    (paddle1_erase),
-		.plot  (plot),
-		.enable(enable)
+		.clk      (CLOCK_50),
+		.resetn   (resetn),
+		.go       (paddle1_erase),
+		.plot     (plot),
+		.enable   (writeEn),
+		.load_en  (load_en),
+		.colourOut(colour)
 	);
 
 	
