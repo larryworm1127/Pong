@@ -7,10 +7,11 @@ module locationProcessor (
 		/* Keyboard inputs */
 		input up;
 		input down;
-
+ 
 		/* Interface tp the screen drawer */
 		input m_ready,
 		output reg m_valid,
+		output [8:0] box_x,
 		output [8:0] box_y,
 		output [2:0] out_color
 	);
@@ -41,7 +42,9 @@ module locationProcessor (
 
 
 	// Position of the box
+	reg [8:0] current_box_x; // Should be synthesized into an FF
 	reg [8:0] current_box_y; // Should be synthesized into an FF
+	reg [8:0] next_box_x;
 	reg [8:0] next_box_y;
 
 	parameter INCREASE = 1'b1, DECREASE = 1'b0;
@@ -49,6 +52,7 @@ module locationProcessor (
 	reg [31:0] current_frame_rate_counter; // FF
 	reg [31:0] next_frame_rate_counter;
 
+	assign box_x = current_box_x;
 	assign box_y = current_box_y;
 
 	assign out_color = in_color;
@@ -59,38 +63,49 @@ module locationProcessor (
 	always @ (*) begin
 		next_state = current_state;
 		case (current_state)
-			S_UPDATE_POSITION: 
-				next_state = (current_frame_rate_counter == FRAME_RATE_COUNT) ? S_WAIT_TRANSACTION : S_WAIT_FRAME_RATE_COUNT;
-				
-			S_WAIT_TRANSACTION:
-				next_state = (m_ready == 1'b1) ? S_UPDATE_POSITION : S_WAIT_TRANSACTION;
-
-			S_WAIT_FRAME_RATE_COUNT:
-				next_state = (current_frame_rate_counter == FRAME_RATE_COUNT) ? S_WAIT_TRANSACTION : S_WAIT_FRAME_RATE_COUNT;
-
+			S_UPDATE_POSITION: begin
+				if (current_frame_rate_counter == FRAME_RATE_COUNT) begin
+						next_state = S_WAIT_TRANSACTION;
+				end
+				else begin
+					next_state = S_WAIT_FRAME_RATE_COUNT;
+				end
+			end
+			S_WAIT_TRANSACTION: begin
+				if (m_ready == 1'b1) begin
+					next_state = S_UPDATE_POSITION;
+				end
+			end
+			S_WAIT_FRAME_RATE_COUNT: begin
+				if (current_frame_rate_counter == FRAME_RATE_COUNT) begin
+					next_state = S_WAIT_TRANSACTION;
+				end
+			end
 			default:
 				next_state = current_state;
 		endcase
 	end
 
 	/*
-		Other combinational logics
+		Other COMB logics
 		- Box position update. 
 		- Interface signal
 		- next frame rate counter
 	*/
 	always @ (*) begin
+		next_box_x = current_box_x;
 		next_box_y = current_box_y;
-		next_box_vy = current_box_vy;
 		m_valid = 1'b0;
-		next_frame_rate_counter = (current_frame_rate_counter == FRAME_RATE_COUNT) ? current_frame_rate_counter : current_frame_rate_counter + 32'd1;
+		next_frame_rate_counter = (current_frame_rate_counter==FRAME_RATE_COUNT) ? current_frame_rate_counter : current_frame_rate_counter + 32'd1;
 		case (current_state)
 			S_UPDATE_POSITION: begin
+				// X position doesn't change
+				next_box_x = current_box_x;
 
-				// Y update (X don't need to be updated)
+				// Y update
 				if (up == INCREASE) begin
 					if (current_box_y + BOX_WIDTH == SCREEN_HEIGHT) begin
-						next_box_y = current_box_y;
+						next_box_y = current_box_y - 9'd1;
 					end
 					else begin
 						next_box_y = current_box_y + 9'd1;
@@ -98,7 +113,7 @@ module locationProcessor (
 				end
 				else if (down == INCREASE) begin
 					if (current_box_y == 9'd0) begin
-						next_box_y = current_box_y;
+						next_box_y = current_box_y + 9'd1;
 					end
 					else begin
 						next_box_y = current_box_y - 9'd1;
@@ -125,10 +140,13 @@ module locationProcessor (
 		if (reset_n == 1'b0) begin
 			current_frame_rate_counter <= 32'd0;
 			current_state <= S_WAIT_TRANSACTION;
+			current_box_x <= 9'd0;
+			current_box_y <= 9'd0;
 		end
 		else begin
 			current_frame_rate_counter <= next_frame_rate_counter;
 			current_state <= next_state;
+			current_box_x <= next_box_x;
 			current_box_y <= next_box_y;
 		end
 	end
@@ -150,9 +168,9 @@ module screenDrawer (
 		input m_ready,
 		output reg m_valid,
 		output reg [8:0] out_box_x,
-		output reg  [8:0] out_box_y,
+		output reg [8:0] out_box_y,
 		output reg [8:0] out_box_h,
-		output reg  [8:0] out_box_w,
+		output reg [8:0] out_box_w,
 		output reg [2:0] out_box_color
 	);
 
