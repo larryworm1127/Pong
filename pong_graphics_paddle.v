@@ -5,8 +5,8 @@ module locationProcessor (
 		input [2:0] in_color,
 
 		/* Keyboard inputs */
-		input up;
-		input down;
+		input up,
+		input down,
  
 		/* Interface tp the screen drawer */
 		input m_ready,
