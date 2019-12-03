@@ -117,8 +117,12 @@ module pong(
 
 	wire [2:0] color_in;
 
-	wire [8:0] box_x;
-	wire [8:0] box_y;
+	wire [8:0] paddle_left_x;
+	wire [8:0] paddle_left_y;
+	wire [8:0] paddle_right_x;
+	wire [8:0] paddle_right_y;
+	wire [8:0] ball_x;
+	wire [8:0] ball_y;
 	wire [2:0] box_color;
 
 	wire processor_data_valid;
@@ -185,25 +189,67 @@ module pong(
 		.key_enter(key_enter)
 	);
 	
-	locationProcessor # (
+	// Location processors
+	locationProcessorPaddle # (
         .BOX_WIDTH       (9'd10),
         .BOX_HEIGHT      (9'd48),
         .SCREEN_WIDTH    (9'd320),
         .SCREEN_HEIGHT   (9'd240),
         .FRAME_RATE_COUNT(32'd9999999) //5 Hz
         )
-        processor (
-            .clock (clock),
-            .reset_n (reset_n),
-            .in_color (color_in),
+        processor_paddle_left (
+            .clock     (clock),
+            .reset_n   (reset_n),
+            .in_color  (color_in),
 			.box_init_x(0),
-			.up(up),
-			.down(down),
-            .m_ready(screen_drawer_ready),
-            .m_valid  (processor_data_valid),
-            .box_x (box_x),
-            .box_y    (box_y),
-            .out_color(box_color)
+			.up        (up),
+			.down      (down),
+            .m_ready   (screen_drawer_ready),
+            .m_valid   (processor_data_valid),
+            .box_x     (paddle_left_x),
+            .box_y     (paddle_left_y),
+            .out_color (box_color)
+            );
+
+    locationProcessorPaddle # (
+        .BOX_WIDTH       (9'd10),
+        .BOX_HEIGHT      (9'd48),
+        .SCREEN_WIDTH    (9'd320),
+        .SCREEN_HEIGHT   (9'd240),
+        .FRAME_RATE_COUNT(32'd9999999) //5 Hz
+        )
+        processor_paddle_right (
+            .clock     (clock),
+            .reset_n   (reset_n),
+            .in_color  (color_in),
+			.box_init_x(310),
+			.up        (up),
+			.down      (down),
+            .m_ready   (screen_drawer_ready),
+            .m_valid   (processor_data_valid),
+            .box_x     (paddle_right_x),
+            .box_y     (paddle_right_y),
+            .out_color (box_color)
+            );
+
+    locationProcessorBall # (
+        .BALL_WIDTH      (9'd10),
+        .BALL_HEIGHT     (9'd48),
+        .SCREEN_WIDTH    (9'd320),
+        .SCREEN_HEIGHT   (9'd240),
+        .LEFT_COLLISION  (9'd10),
+	    .RIGHT_COLLISION (9'd310),
+        .FRAME_RATE_COUNT(32'd9999999) //5 Hz
+        )
+        processor_paddle_right (
+            .clock     (clock),
+            .reset_n   (reset_n),
+            .in_color  (color_in),
+            .m_ready   (screen_drawer_ready),
+            .m_valid   (processor_data_valid),
+            .box_x     (ball_x),
+            .box_y     (ball_y),
+            .out_color (box_color)
             );
 
     screenDrawer # (
@@ -218,8 +264,8 @@ module pong(
             .reset_n      (reset_n),
             .s_ready      (screen_drawer_ready),
 			.s_valid      (processor_data_valid),
-			.in_box_x     (box_x),
-			.in_box_y     (box_y),
+			.in_box_x     (paddle_left_x),
+			.in_box_y     (paddle_left_y),
 			.in_box_color (box_color),
 
 			.m_ready      (box_drawer_ready),

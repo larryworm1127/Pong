@@ -1,0 +1,138 @@
+
+module screenDrawer (
+		input clock,
+		input reset_n,
+
+		/* Interface tp the location processor */
+		output reg s_ready,
+		input s_valid,
+		input [8:0] in_box_x,
+		input [8:0] in_box_y,
+		input [2:0] in_box_color,
+
+		/* Interface to the box drawer */
+		input m_ready,
+		output reg m_valid,
+		output reg [8:0] out_box_x,
+		output reg [8:0] out_box_y,
+		output reg [8:0] out_box_h,
+		output reg [8:0] out_box_w,
+		output reg [2:0] out_box_color
+	);
+
+	/*
+		Parameters that should be configured properly at the instantiation of the module.
+		The values here are just defaults.
+		In simulation testbenches, these values can be replaced with smallar values
+	*/
+	parameter BOX_WIDTH = 9'd10;
+	parameter BOX_HEIGHT = 9'd48;
+	parameter SCREEN_WIDTH = 9'd320;
+	parameter SCREEN_HEIGHT = 9'd240;
+	parameter REFRESH_RATE_COUNT = 32'd833332;
+
+	/*
+		State encodings
+	*/
+	parameter S_WAIT_FOR_INPUT = 2'd0,
+			  S_WAIT_TO_DRAW_BACKGROUND = 2'd1,
+			  S_WAIT_TO_DRAW_BOX = 2'd2,
+			  S_WAIT_FOR_REFRESH_COUNT = 2'd3;
+
+	/*
+		Internal signals
+	*/
+	reg [1:0] current_state; // Should be synthesized into an FF.
+	reg [1:0] next_state;
+
+
+	// Position of the box
+	reg [8:0] box_x; // Should be synthesized into an FF
+	reg [8:0] box_y; // Should be synthesized into an FF
+	reg [2:0] box_color; // Should be synthesized into an FF
+
+	reg [31:0] refresh_count;
+
+	/*
+		Next state logic update
+		Interface signals control
+	*/
+	always @ (*) begin
+		next_state = current_state;
+		s_ready = 1'b0;
+		m_valid = 1'b0;
+		out_box_x = 9'd0;
+		out_box_y = 9'd0;
+		out_box_w = 9'd1;
+		out_box_h = 9'd1;
+		out_box_color = 3'd0;
+
+		case (current_state)
+			S_WAIT_FOR_INPUT: begin
+				s_ready = 1'b1;
+				if (s_valid == 1'b1) begin
+					next_state = S_WAIT_TO_DRAW_BACKGROUND;
+				end
+			end
+			S_WAIT_TO_DRAW_BACKGROUND: begin
+				m_valid = 1'b1;
+				out_box_x = 9'd0;
+				out_box_y = 9'd0;
+				out_box_w = SCREEN_WIDTH;
+				out_box_h = SCREEN_HEIGHT;
+				out_box_color = 3'd0;
+				if (m_ready == 1'b1) begin
+					next_state = S_WAIT_TO_DRAW_BOX;
+				end
+			end
+			S_WAIT_TO_DRAW_BOX: begin
+				m_valid = 1'b1;
+				out_box_x = box_x;
+				out_box_y = box_y;
+				out_box_w = BOX_WIDTH;
+				out_box_h = BOX_HEIGHT;
+				out_box_color = box_color;
+				if (m_ready == 1'b1) begin
+					next_state = S_WAIT_FOR_REFRESH_COUNT;
+				end
+			end
+			S_WAIT_FOR_REFRESH_COUNT: begin
+				if (refresh_count == REFRESH_RATE_COUNT) begin
+					next_state = S_WAIT_FOR_INPUT;
+				end
+			end
+			default: begin
+		end
+		endcase
+	end
+
+	/*
+		Sequential logic
+	*/
+	always @ (posedge clock) begin
+		if (reset_n == 1'b0) begin
+			refresh_count <= 32'd0;
+			box_x <= 9'd0;
+			box_y <= 9'd0;
+			box_color <= 3'd0;
+			current_state <= S_WAIT_FOR_INPUT;
+		end
+		else begin
+			current_state <= next_state;
+			
+			if (current_state == S_WAIT_FOR_INPUT && s_valid == 1'b1) begin
+				box_x <= in_box_x;
+				box_y <= in_box_y;
+				box_color <= in_box_color;
+			end
+
+			if (current_state == S_WAIT_TO_DRAW_BACKGROUND) begin
+				refresh_count <= 32'd0;
+			end
+			else begin
+				refresh_count <= (refresh_count == REFRESH_RATE_COUNT) ? refresh_count : refresh_count + 32'd1;
+			end
+			
+		end
+	end
+endmodule // screen drawer
