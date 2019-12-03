@@ -255,6 +255,8 @@ module pong(
     screenDrawer # (
 		.BOX_WIDTH         (9'd10),
 		.BOX_HEIGHT        (9'd48),
+		.BALL_WIDTH        (9'd4),
+		.BALL_HEIGHT       (9'd4),
 		.SCREEN_WIDTH      (9'd320),
 		.SCREEN_HEIGHT     (9'd240),
 		.REFRESH_RATE_COUNT(32'd833332) //60Hz
