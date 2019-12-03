@@ -262,21 +262,25 @@ module pong(
 		.REFRESH_RATE_COUNT(32'd833332) //60Hz
 		)
 		screen_drawer_0 (
-            .clock        (clock),
-            .reset_n      (reset_n),
-            .s_ready      (screen_drawer_ready),
-			.s_valid      (processor_data_valid),
-			.in_box_x     (paddle_left_x),
-			.in_box_y     (paddle_left_y),
-			.in_box_color (box_color),
+            .clock            (clock),
+            .reset_n          (reset_n),
+            .s_ready          (screen_drawer_ready),
+			.s_valid          (processor_data_valid),
+			.in_paddle_left_x (paddle_left_x),
+			.in_paddle_left_y (paddle_left_y),
+			.in_paddle_right_x(paddle_right_x)
+			.in_paddle_right_y(paddle_right_y)
+			.in_ball_x        (ball_x),
+			.in_ball_y        (ball_y),
+			.in_box_color     (box_color),
 
-			.m_ready      (box_drawer_ready),
-			.m_valid      (screen_drawer_data_valid),
-			.out_box_x    (draw_box_x),
-			.out_box_y    (draw_box_y),
-			.out_box_w    (draw_box_w),
-			.out_box_h    (draw_box_h),
-			.out_box_color(draw_box_color)
+			.m_ready          (box_drawer_ready),
+			.m_valid          (screen_drawer_data_valid),
+			.out_box_x        (draw_box_x),
+			.out_box_y        (draw_box_y),
+			.out_box_w        (draw_box_w),
+			.out_box_h        (draw_box_h),
+			.out_box_color    (draw_box_color)
             );
 
     boxDrawer box_drawer_0 (

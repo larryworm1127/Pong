@@ -148,10 +148,10 @@ module screenDrawer (
 			refresh_count <= 32'd0;
 			paddle_left_x <= 9'd0;
 			paddle_left_y <= 9'd0;
-			paddle_right_x <= 9'd0;
+			paddle_right_x <= 9'd310;
 			paddle_right_y <= 9'd0;
-			ball_x <= 9'd0;
-			ball_y <= 9'd0;
+			ball_x <= 9'd160;
+			ball_y <= 9'd120;
 			box_color <= 3'd0;
 			current_state <= S_WAIT_FOR_INPUT;
 		end
