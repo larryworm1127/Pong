@@ -3,11 +3,12 @@ module locationProcessor (
 		input clock,
 		input reset_n,
 		input [2:0] in_color,
+		input [8:0] box_init_x,
 
 		/* Keyboard inputs */
 		input up,
 		input down,
- 
+
 		/* Interface tp the screen drawer */
 		input m_ready,
 		output reg m_valid,
@@ -99,24 +100,24 @@ module locationProcessor (
 		next_frame_rate_counter = (current_frame_rate_counter==FRAME_RATE_COUNT) ? current_frame_rate_counter : current_frame_rate_counter + 32'd1;
 		case (current_state)
 			S_UPDATE_POSITION: begin
-				// X position doesn't change
+				// X update
 				next_box_x = current_box_x;
 
 				// Y update
-				if (up == INCREASE) begin
-					if (current_box_y + BOX_WIDTH == SCREEN_HEIGHT) begin
-						next_box_y = current_box_y - 9'd1;
+				if (down == INCREASE) begin
+					if (current_box_y + BOX_HEIGHT == SCREEN_HEIGHT) begin
+						next_box_y = current_box_y;
 					end
 					else begin
-						next_box_y = current_box_y + 9'd1;
+						next_box_y = current_box_y + 9'd4;
 					end
 				end
-				else if (down == INCREASE) begin
+				else if (up == INCREASE) begin
 					if (current_box_y == 9'd0) begin
-						next_box_y = current_box_y + 9'd1;
+						next_box_y = current_box_y;
 					end
 					else begin
-						next_box_y = current_box_y - 9'd1;
+						next_box_y = current_box_y - 9'd4;
 					end
 				end
 				else begin
@@ -140,7 +141,7 @@ module locationProcessor (
 		if (reset_n == 1'b0) begin
 			current_frame_rate_counter <= 32'd0;
 			current_state <= S_WAIT_TRANSACTION;
-			current_box_x <= 9'd0;
+			current_box_x <= box_init_x;
 			current_box_y <= 9'd0;
 		end
 		else begin
@@ -179,8 +180,8 @@ module screenDrawer (
 		The values here are just defaults.
 		In simulation testbenches, these values can be replaced with smallar values
 	*/
-	parameter BOX_WIDTH = 9'd48;
-	parameter BOX_HEIGHT = 9'd10;
+	parameter BOX_WIDTH = 9'd10;
+	parameter BOX_HEIGHT = 9'd48;
 	parameter SCREEN_WIDTH = 9'd320;
 	parameter SCREEN_HEIGHT = 9'd240;
 	parameter REFRESH_RATE_COUNT = 32'd833332;
@@ -306,8 +307,8 @@ module boxDrawer (
 		input [2:0] in_box_color,
 
 		/* Interface to VGA adapter. Assuming 160x120 resolution, 8 colour */
-		output [7:0] vga_x,
-		output [6:0] vga_y,
+		output [8:0] vga_x,
+		output [7:0] vga_y,
 		output reg plot,
 		output [2:0] colour
 	);
