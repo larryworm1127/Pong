@@ -337,7 +337,8 @@ module score(
 	input right_enable,  		 // Add one to right reg
 	output reg [3:0] left_out,   // Output score left paddle
 	output reg [3:0] right_out,	 // Output score right paddle
-	output reg player_won); 		 // Output high if any scores are 11
+	output reg left_player_won,  // Output high if any scores are 11
+	output reg right_player_won);// Output high if any scores are 11
 	
 	// Only have one enable at a time or nothing happens
 	always @ (posedge clock) begin
@@ -345,14 +346,15 @@ module score(
 		if (!reset)begin
 			left_out <= 0;
 			right_out <= 0;
-			player_won <= 0;
+			left_player_won <= 0;
+			right_player_won <= 0;
 		end 
 		else if (left_enable == 1) begin
 			left_out <= left_out + 1;
 
 			// Check if 11
 			if (left_out == 4'd11) begin
-				player_won <= 1;
+				left_player_won <= 1;
 			end
 		end
 		else if (right_enable == 1) begin
@@ -360,7 +362,7 @@ module score(
 
 			// Check if 11
 			if (right_out == 4'd11) begin
-				player_won <= 1;
+				right_player_won <= 1;
 			end
 		end
 		else begin
