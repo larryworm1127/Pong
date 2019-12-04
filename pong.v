@@ -370,6 +370,8 @@ module score(
 		else begin
 			left_out <= left_out;
 			right_out <= right_out;
+			left_enable <= 0;
+			right_enable <= 0;
 		end
 	end
 endmodule
