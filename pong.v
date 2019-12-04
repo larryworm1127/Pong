@@ -242,14 +242,16 @@ module pong(
         .FRAME_RATE_COUNT(32'd9999999) //5 Hz
         )
         processor_paddle_right (
-            .clock     (clock),
-            .reset_n   (reset_n),
-            .in_color  (color_in),
-            .m_ready   (screen_drawer_ready),
-            .m_valid   (processor_data_valid),
-            .box_x     (ball_x),
-            .box_y     (ball_y),
-            .out_color (box_color)
+            .clock         (clock),
+            .reset_n       (reset_n),
+            .in_color      (color_in),
+            .paddle_left_y (paddle_left_y),
+            .paddle_right_y(paddle_right_y),
+            .m_ready       (screen_drawer_ready),
+            .m_valid       (processor_data_valid),
+            .box_x         (ball_x),
+            .box_y         (ball_y),
+            .out_color     (box_color)
             );
 
     screenDrawer # (
