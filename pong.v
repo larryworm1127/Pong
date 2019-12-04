@@ -241,7 +241,7 @@ module pong(
 
     locationProcessorBall # (
         .BALL_WIDTH      (9'd10),
-        .BALL_HEIGHT     (9'd48),
+        .BALL_HEIGHT     (9'd10),
         .SCREEN_WIDTH    (9'd320),
         .SCREEN_HEIGHT   (9'd240),
         .LEFT_COLLISION  (9'd10),
