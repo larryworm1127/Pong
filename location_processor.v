@@ -272,9 +272,9 @@ module locationProcessorBall (
 				// X update
 				if (current_box_vx == INCREASE) begin
 					// Paddle bounce logic
-					if (current_box_x + BALL_WIDTH == RIGHT_COLLISION) begin
-						next_box_x = current_box_x - 9'd1;
-						next_box_vx = DECREASE;
+					if (current_box_x + BALL_WIDTH == RIGHT_COLLISION && (paddle_right_y <= current_box_y <= paddle_right_y + 9'd48 || paddle_right_y <= current_box_y + BOX_HEIGHT <= paddle_right_y + 9'd48)) begin
+							next_box_x = current_box_x - 9'd1;
+							next_box_vx = DECREASE;
 					end
 					else begin
 						next_box_x = current_box_x + 9'd1;
@@ -282,15 +282,15 @@ module locationProcessorBall (
 
 					// Score logic, passes right side so left gets point
 					if (current_box_x + BALL_WIDTH > RIGHT_COLLISION) begin
-						left_point <= 1;
+						left_point = 1;
 					end
 					else begin
-						left_point <= 0;
+						left_point = 0;
 					end 
 				end
 				else begin
 					// Paddle bounce logic
-					if (current_box_x == LEFT_COLLISION) begin
+					if (current_box_x == LEFT_COLLISION && (paddle_left_y <= current_box_y <= paddle_left_y + 9'd48 || paddle_left_y <= current_box_y + BOX_HEIGHT <= paddle_left_y + 9'd48)) begin
 						next_box_x = current_box_x + 9'd1;
 						next_box_vx = INCREASE;
 					end
@@ -300,10 +300,10 @@ module locationProcessorBall (
 
 					// Score logic, passes left side so right gets point
 					if (current_box_x + BALL_WIDTH > RIGHT_COLLISION) begin
-						right_point <= 1;
+						right_point = 1;
 					end
 					else begin
-						right_point <= 0;
+						right_point = 0;
 					end 
 				end
 
