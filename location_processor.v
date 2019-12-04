@@ -271,7 +271,7 @@ module locationProcessorBall (
 					end
 				end
 				else begin
-					if (current_box_x == 9'd0) begin
+					if (current_box_x == LEFT_COLLISION) begin
 						next_box_x = current_box_x + 9'd1;
 						next_box_vx = INCREASE;
 					end
@@ -282,7 +282,7 @@ module locationProcessorBall (
 
 				// Y update
 				if (current_box_vy == INCREASE) begin
-					if (current_box_y + BALL_WIDTH == LEFT_COLLISION) begin
+					if (current_box_y + BALL_WIDTH == SCREEN_HEIGHT) begin
 						next_box_y = current_box_y - 9'd1;
 						next_box_vy = DECREASE;
 					end
