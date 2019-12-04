@@ -142,6 +142,13 @@ module pong(
 	wire [2:0] vga_color;
 	wire vga_plot;
 
+	wire left_enable;
+	wire right_enable;
+	wire [3:0] left_out;
+	wire [3:0] right_out;
+	wire left_player_won;
+	wire right_player_won;
+
 
 	//=======================================================
 	//  Structural coding
@@ -173,7 +180,7 @@ module pong(
             .VGA_BLANK(VGA_BLANK_N),
             .VGA_SYNC(VGA_SYNC_N),
             .VGA_CLK(VGA_CLK)
-       );
+       		);
 
 	// Instantiate keyboard controller
 	keyboard k0(
@@ -187,7 +194,7 @@ module pong(
 		.key_down (key_down),
 		.key_space(key_space),
 		.key_enter(key_enter)
-	);
+		);
 	
 	// Location processors
 	locationProcessorPaddle # (
@@ -300,7 +307,18 @@ module pong(
         .vga_y       (vga_y),
         .plot        (vga_plot),
         .colour      (vga_color)
-	);
+		);
+
+	score score_0 (
+		.clock           (clock),
+		.reset_n         (reset_n),
+		.left_enable     (left_enable),
+		.right_enable    (right_enable),
+		.left_out        (left_out),
+		.right_out       (right_out),
+		.left_player_won (left_player_won),
+		.right_player_won(right_player_won)
+		);
 
 	
 endmodule
@@ -308,12 +326,12 @@ endmodule
 
 // Handles keyboard input
 module keyboard(
-	input clock,
-	input resetn,
-	input PS2_CLK,
-	input PS2_DAT,
-	output key_w, key_s, key_up, key_down, 
-	output key_space, key_enter
+		input clock,
+		input resetn,
+		input PS2_CLK,
+		input PS2_DAT,
+		output key_w, key_s, key_up, key_down, 
+		output key_space, key_enter
 	);
 
 	keyboard_tracker #(.PULSE_OR_HOLD(0)) k1(
@@ -333,14 +351,15 @@ endmodule
 
 
 module score(
-	input clock,
-	input reset,
-	input left_enable,	         // Add one to left reg
-	input right_enable,  		 // Add one to right reg
-	output reg [3:0] left_out,   // Output score left paddle
-	output reg [3:0] right_out,	 // Output score right paddle
-	output reg left_player_won,  // Output high if any scores are 11
-	output reg right_player_won);// Output high if any scores are 11
+		input clock,
+		input reset_n,
+		input left_enable,	         // Add one to left reg
+		input right_enable,  		 // Add one to right reg
+		output reg [3:0] left_out,   // Output score left paddle
+		output reg [3:0] right_out,	 // Output score right paddle
+		output reg left_player_won,  // Output high if any scores are 11
+		output reg right_player_won  // Output high if any scores are 11
+	);
 	
 	// Only have one enable at a time or nothing happens
 	always @ (posedge clock) begin
