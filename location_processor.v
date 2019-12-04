@@ -158,8 +158,10 @@ module locationProcessorBall (
 		input clock,
 		input reset_n,
 		input [2:0] in_color,
+		input [8:0] paddle_left_y,
+		input [8:0] paddle_right_y,
 
-		/*Interface tp the screen drawer*/
+		/* Interface tp the screen drawer */
 		input m_ready,
 		output reg m_valid,
 		output [8:0] box_x,

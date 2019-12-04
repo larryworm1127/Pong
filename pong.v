@@ -349,6 +349,7 @@ module score(
 		end 
 		else if (left_enable == 1) begin
 			left_out <= left_out + 1;
+			left_enable <= 0;
 
 			// Check if 11
 			if (left_out == 4'd11) begin
@@ -357,6 +358,7 @@ module score(
 		end
 		else if (right_enable == 1) begin
 			right_out <= right_out + 1;
+			right_enable <= 0;
 
 			// Check if 11
 			if (right_out == 4'd11) begin
