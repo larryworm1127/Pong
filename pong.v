@@ -59,10 +59,10 @@ module pong(
 		output      [6:0]  HEX1,
 
 		///////// HEX2 /////////
-		output      [6:0]  HEX2,
+		//output      [6:0]  HEX2,
 
 		///////// HEX3 /////////
-		output      [6:0]  HEX3,
+		//output      [6:0]  HEX3,
 
 		///////// HEX4 /////////
 		output      [6:0]  HEX4,
@@ -112,8 +112,11 @@ module pong(
 	//=======================================================
 	wire clock;
 	wire reset_n;
-	wire up;
-	wire down;
+	wire score_reset_n;
+	wire up_left;
+	wire down_left;
+	wire up_right;
+	wire down_right;
 
 	wire [2:0] color_in;
 
@@ -124,8 +127,13 @@ module pong(
 	wire [8:0] ball_x;
 	wire [8:0] ball_y;
 	wire [2:0] box_color;
+	wire [2:0] paddle_right_color;
+	wire [2:0] paddle_left_color;
+	//assign box_color = 3'b111;
 
-	wire processor_data_valid;
+	wire processor_data_valid_pl;
+	wire processor_data_valid_pr;
+	wire processor_data_valid_ball;
 	wire screen_drawer_ready;
 
 	wire screen_drawer_data_valid;
@@ -144,20 +152,21 @@ module pong(
 
 	wire left_enable;
 	wire right_enable;
-	wire [3:0] left_out;
-	wire [3:0] right_out;
-	wire left_player_won;
-	wire right_player_won;
+	wire [7:0] left_score;
+	wire [7:0] right_score;
 
 
 	//=======================================================
 	//  Structural coding
 	//=======================================================
 	assign clock = CLOCK_50;
-	assign reset_n = KEY[0];
+	assign reset_n = SW[0];
+	assign score_reset_n = SW[1];
 	assign color_in = SW[9:7];
-	assign up = ~KEY[1];
-	assign down = ~KEY[2];
+	assign up_left = ~KEY[2];
+	assign down_left = ~KEY[3];
+	assign up_right = ~KEY[0];
+	assign down_right = ~KEY[1];
 	
 	vga_adapter #(
 		.RESOLUTION             ("320x240"),
@@ -182,20 +191,6 @@ module pong(
             .VGA_CLK(VGA_CLK)
        		);
 
-	// Instantiate keyboard controller
-	keyboard k0(
-		.clock    (clock),
-		.resetn   (reset_n),
-		.PS2_CLK  (PS2_CLK),
-		.PS2_DAT  (PS2_DAT),
-		.key_w    (key_w),
-		.key_s    (key_s),
-		.key_up   (key_up),
-		.key_down (key_down),
-		.key_space(key_space),
-		.key_enter(key_enter)
-		);
-	
 	// Location processors
 	locationProcessorPaddle # (
         .BOX_WIDTH       (9'd10),
@@ -209,13 +204,13 @@ module pong(
             .reset_n   (reset_n),
             .in_color  (color_in),
 			.box_init_x(0),
-			.up        (up),
-			.down      (down),
+			.up        (up_left),
+			.down      (down_left),
             .m_ready   (screen_drawer_ready),
-            .m_valid   (processor_data_valid),
+            .m_valid   (processor_data_valid_pl),
             .box_x     (paddle_left_x),
             .box_y     (paddle_left_y),
-            .out_color (box_color)
+            .out_color (paddle_left_box_color)
             );
 
     locationProcessorPaddle # (
@@ -230,13 +225,13 @@ module pong(
             .reset_n   (reset_n),
             .in_color  (color_in),
 			.box_init_x(310),
-			.up        (up),
-			.down      (down),
+			.up        (up_right),
+			.down      (down_right),
             .m_ready   (screen_drawer_ready),
-            .m_valid   (processor_data_valid),
+            .m_valid   (processor_data_valid_pr),
             .box_x     (paddle_right_x),
             .box_y     (paddle_right_y),
-            .out_color (box_color)
+            .out_color (paddle_left_box_color)
             );
 
     locationProcessorBall # (
@@ -245,27 +240,29 @@ module pong(
         .SCREEN_WIDTH    (9'd320),
         .SCREEN_HEIGHT   (9'd240),
         .LEFT_COLLISION  (9'd10),
-	    .RIGHT_COLLISION (9'd310),
+	     .RIGHT_COLLISION (9'd310),
         .FRAME_RATE_COUNT(32'd9999999) //5 Hz
         )
-        processor_paddle_right (
+        processor_ball (
             .clock         (clock),
             .reset_n       (reset_n),
             .in_color      (color_in),
             .paddle_left_y (paddle_left_y),
             .paddle_right_y(paddle_right_y),
             .m_ready       (screen_drawer_ready),
-            .m_valid       (processor_data_valid),
+            .m_valid       (processor_data_valid_ball),
             .box_x         (ball_x),
             .box_y         (ball_y),
-            .out_color     (box_color)
+            .out_color     (box_color),
+			.left_point    (left_enable),
+			.right_point   (right_enable)
             );
 
     screenDrawer # (
 		.BOX_WIDTH         (9'd10),
 		.BOX_HEIGHT        (9'd48),
-		.BALL_WIDTH        (9'd4),
-		.BALL_HEIGHT       (9'd4),
+		.BALL_WIDTH        (9'd10),
+		.BALL_HEIGHT       (9'd10),
 		.SCREEN_WIDTH      (9'd320),
 		.SCREEN_HEIGHT     (9'd240),
 		.REFRESH_RATE_COUNT(32'd833332) //60Hz
@@ -274,11 +271,13 @@ module pong(
             .clock            (clock),
             .reset_n          (reset_n),
             .s_ready          (screen_drawer_ready),
-			.s_valid          (processor_data_valid),
+			.s_valid_pl       (processor_data_valid_pl),
+			.s_valid_pr       (processor_data_valid_pr),
+			.s_valid_ball     (processor_data_valid_ball),
 			.in_paddle_left_x (paddle_left_x),
 			.in_paddle_left_y (paddle_left_y),
-			.in_paddle_right_x(paddle_right_x)
-			.in_paddle_right_y(paddle_right_y)
+			.in_paddle_right_x(paddle_right_x),
+			.in_paddle_right_y(paddle_right_y),
 			.in_ball_x        (ball_x),
 			.in_ball_y        (ball_y),
 			.in_box_color     (box_color),
@@ -311,41 +310,32 @@ module pong(
 
 	score score_0 (
 		.clock           (clock),
-		.reset_n         (reset_n),
+		.reset_n         (score_reset_n),
 		.left_enable     (left_enable),
 		.right_enable    (right_enable),
-		.left_out        (left_out),
-		.right_out       (right_out),
-		.left_player_won (left_player_won),
-		.right_player_won(right_player_won)
+		.left_out        (left_score),
+		.right_out       (right_score)
 		);
+		
+	hex_decoder H0(
+	    .hex_digit(right_score[3:0]),
+	    .segments(HEX0)
+	    );
+		 
+	hex_decoder H1(
+	    .hex_digit(right_score[7:4]),
+	    .segments(HEX1)
+	    );
 
-	
-endmodule
-
-
-// Handles keyboard input
-module keyboard(
-		input clock,
-		input resetn,
-		input PS2_CLK,
-		input PS2_DAT,
-		output key_w, key_s, key_up, key_down, 
-		output key_space, key_enter
-	);
-
-	keyboard_tracker #(.PULSE_OR_HOLD(0)) k1(
-		.clock  (clock),
-		.reset  (resetn),
-		.PS2_CLK(PS2_CLK),
-		.PS2_DAT(PS2_DAT),
-		.w      (key_w),
-		.s      (key_s),
-		.up     (key_up),
-		.down   (key_down),
-		.space  (key_space),
-		.enter  (key_enter)
-	);
+	hex_decoder H4(
+	    .hex_digit(left_score[3:0]),
+	    .segments(HEX4)
+	    );	
+		 	
+	hex_decoder H5(
+	    .hex_digit(left_score[7:4]),
+	    .segments(HEX5)
+	    );	
 
 endmodule
 
@@ -355,44 +345,26 @@ module score(
 		input reset_n,
 		input left_enable,	         // Add one to left reg
 		input right_enable,  		 // Add one to right reg
-		output reg [3:0] left_out,   // Output score left paddle
-		output reg [3:0] right_out,	 // Output score right paddle
-		output reg left_player_won,  // Output high if any scores are 11
-		output reg right_player_won  // Output high if any scores are 11
+		output reg [7:0] left_out,   // Output score left paddle
+		output reg [7:0] right_out	 // Output score right paddle
 	);
-	
+		
 	// Only have one enable at a time or nothing happens
-	always @ (posedge clock) begin
+	always @ (*) begin
 		// Reset both scores to 0
-		if (!reset)begin
-			left_out <= 0;
-			right_out <= 0;
-			left_player_won <= 0;
-			right_player_won <= 0;
+		if (!reset_n) begin
+			left_out = 0;
+			right_out = 0;
 		end 
 		else if (left_enable == 1) begin
-			left_out <= left_out + 1;
-			left_enable <= 0;
+			left_out = left_out + 1;
 
-			// Check if 11
-			if (left_out == 4'd11) begin
-				left_player_won <= 1;
-			end
 		end
 		else if (right_enable == 1) begin
-			right_out <= right_out + 1;
-			right_enable <= 0;
-
-			// Check if 11
-			if (right_out == 4'd11) begin
-				right_player_won <= 1;
-			end
+			right_out = right_out + 1;
 		end
 		else begin
-			left_out <= left_out;
-			right_out <= right_out;
-			left_enable <= 0;
-			right_enable <= 0;
 		end
 	end
 endmodule
+

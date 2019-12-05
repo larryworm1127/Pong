@@ -5,13 +5,15 @@ module screenDrawer (
 
 		/* Interface tp the location processor */
 		output reg s_ready,
-		input s_valid,
+		input s_valid_pl,
+		input s_valid_pr,
+		input s_valid_ball,
 		input [8:0] in_paddle_left_x,
 		input [8:0] in_paddle_left_y,
-		input [8:0] in_paddle_right_x;
-		input [8:0] in_paddle_right_y;
-		input [8:0] in_ball_x;
-		input [8:0] in_ball_y;
+		input [8:0] in_paddle_right_x,
+		input [8:0] in_paddle_right_y,
+		input [8:0] in_ball_x,
+		input [8:0] in_ball_y,
 		input [2:0] in_box_color,
 
 		/* Interface to the box drawer */
@@ -31,8 +33,8 @@ module screenDrawer (
 	*/
 	parameter BOX_WIDTH = 9'd10;
 	parameter BOX_HEIGHT = 9'd48;
-	parameter BALL_WIDTH = 9'd4;
-	parameter BALL_HEIGHT = 9'd4;
+	parameter BALL_WIDTH = 9'd10;
+	parameter BALL_HEIGHT = 9'd10;
 	parameter SCREEN_WIDTH = 9'd320;
 	parameter SCREEN_HEIGHT = 9'd240;
 	parameter REFRESH_RATE_COUNT = 32'd833332;
@@ -40,18 +42,18 @@ module screenDrawer (
 	/*
 		State encodings
 	*/
-	parameter S_WAIT_FOR_INPUT = 2'd0,
-			  S_WAIT_TO_DRAW_BACKGROUND = 2'd1,
-			  S_WAIT_TO_DRAW_PADDLE_LEFT = 2'd2,
-			  S_WAIT_TO_DRAW_PADDLE_RIGHT = 2'd3,
-			  S_WAIT_TO_DRAW_BALL = 2'd4,
-			  S_WAIT_FOR_REFRESH_COUNT = 2'd5;
+	parameter S_WAIT_FOR_INPUT = 3'd0,
+			  S_WAIT_TO_DRAW_BACKGROUND = 3'd1,
+			  S_WAIT_TO_DRAW_PADDLE_LEFT = 3'd2,
+			  S_WAIT_TO_DRAW_PADDLE_RIGHT = 3'd3,
+			  S_WAIT_TO_DRAW_BALL = 3'd4,
+			  S_WAIT_FOR_REFRESH_COUNT = 3'd5;
 
 	/*
 		Internal signals
 	*/
-	reg [1:0] current_state; // Should be synthesized into an FF.
-	reg [1:0] next_state;
+	reg [2:0] current_state; // Should be synthesized into an FF.
+	reg [2:0] next_state;
 
 
 	// Position of the box
@@ -82,7 +84,7 @@ module screenDrawer (
 		case (current_state)
 			S_WAIT_FOR_INPUT: begin
 				s_ready = 1'b1;
-				if (s_valid == 1'b1) begin
+				if (s_valid_pl == 1'b1 && s_valid_pr == 1'b1 && s_valid_ball == 1'b1) begin
 					next_state = S_WAIT_TO_DRAW_BACKGROUND;
 				end
 			end
@@ -147,9 +149,9 @@ module screenDrawer (
 		if (reset_n == 1'b0) begin
 			refresh_count <= 32'd0;
 			paddle_left_x <= 9'd0;
-			paddle_left_y <= 9'd0;
+			paddle_left_y <= 9'd100;
 			paddle_right_x <= 9'd310;
-			paddle_right_y <= 9'd0;
+			paddle_right_y <= 9'd100;
 			ball_x <= 9'd160;
 			ball_y <= 9'd120;
 			box_color <= 3'd0;
@@ -158,7 +160,7 @@ module screenDrawer (
 		else begin
 			current_state <= next_state;
 			
-			if (current_state == S_WAIT_FOR_INPUT && s_valid == 1'b1) begin
+			if (current_state == S_WAIT_FOR_INPUT && s_valid_pl == 1'b1 && s_valid_pr == 1'b1 && s_valid_ball == 1'b1) begin
 				paddle_left_x <= in_paddle_left_x;
 				paddle_left_y <= in_paddle_left_y;
 				paddle_right_x <= in_paddle_right_x;

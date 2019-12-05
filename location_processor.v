@@ -178,8 +178,8 @@ module locationProcessorBall (
 		The values here are just defaults.
 		In simulation testbenches, these values can be replaced with smallar values
 	*/
-	parameter BALL_WIDTH = 9'd4;
-	parameter BALL_HEIGHT = 9'd4;
+	parameter BALL_WIDTH = 9'd10;
+	parameter BALL_HEIGHT = 9'd10;
 	parameter SCREEN_WIDTH = 9'd320;
 	parameter SCREEN_HEIGHT = 9'd240;
 	parameter LEFT_COLLISION = 9'd10;
@@ -272,58 +272,56 @@ module locationProcessorBall (
 				// X update
 				if (current_box_vx == INCREASE) begin
 					// Paddle bounce logic
-					if (current_box_x + BALL_WIDTH == RIGHT_COLLISION && (paddle_right_y <= current_box_y <= paddle_right_y + 9'd48 || paddle_right_y <= current_box_y + BOX_HEIGHT <= paddle_right_y + 9'd48)) begin
-							next_box_x = current_box_x - 9'd1;
+					if (current_box_x + BALL_WIDTH >= RIGHT_COLLISION && ((paddle_right_y <= current_box_y && current_box_y <= paddle_right_y + 9'd48) || (paddle_right_y <= current_box_y + BALL_HEIGHT && current_box_y + BALL_HEIGHT <= paddle_right_y + 9'd48))) begin
+					//if (current_box_x + BALL_WIDTH == RIGHT_COLLISION) begin
+							next_box_x = current_box_x - 9'd3;
 							next_box_vx = DECREASE;
 					end
-					else begin
-						next_box_x = current_box_x + 9'd1;
-					end
-
-					// Score logic, passes right side so left gets point
-					if (current_box_x + BALL_WIDTH > RIGHT_COLLISION) begin
+					else if (current_box_x >= RIGHT_COLLISION && current_box_x <= SCREEN_WIDTH) begin
+						next_box_x = current_box_x + 9'd3;
 						left_point = 1;
 					end
+					// Score logic, passes right side so left gets point
 					else begin
+						next_box_x = current_box_x + 9'd3;
 						left_point = 0;
-					end 
+					end
 				end
 				else begin
 					// Paddle bounce logic
-					if (current_box_x == LEFT_COLLISION && (paddle_left_y <= current_box_y <= paddle_left_y + 9'd48 || paddle_left_y <= current_box_y + BOX_HEIGHT <= paddle_left_y + 9'd48)) begin
-						next_box_x = current_box_x + 9'd1;
+					if (current_box_x <= LEFT_COLLISION && ((paddle_left_y <= current_box_y && current_box_y <= paddle_left_y + 9'd48) || (paddle_left_y <= current_box_y + BALL_HEIGHT && current_box_y + BALL_HEIGHT <= paddle_left_y + 9'd48))) begin
+					//if (current_box_x == LEFT_COLLISION) begin
+						next_box_x = current_box_x + 9'd3;
 						next_box_vx = INCREASE;
 					end
-					else begin
-						next_box_x = current_box_x - 9'd1;
-					end
-
-					// Score logic, passes left side so right gets point
-					if (current_box_x + BALL_WIDTH > RIGHT_COLLISION) begin
+					else if (current_box_x + BALL_WIDTH <= LEFT_COLLISION && current_box_x + BALL_WIDTH >= 0) begin
+						next_box_x = current_box_x - 9'd3;
 						right_point = 1;
 					end
+					// Score logic, passes left side so right gets point
 					else begin
+						next_box_x = current_box_x - 9'd3;
 						right_point = 0;
-					end 
+					end
 				end
 
 				// Y update
 				if (current_box_vy == INCREASE) begin
-					if (current_box_y + BALL_WIDTH == SCREEN_HEIGHT) begin
-						next_box_y = current_box_y - 9'd1;
+					if (current_box_y + BALL_WIDTH >= SCREEN_HEIGHT) begin
+						next_box_y = current_box_y - 9'd3;
 						next_box_vy = DECREASE;
 					end
 					else begin
-						next_box_y = current_box_y + 9'd1;
+						next_box_y = current_box_y + 9'd3;
 					end
 				end
 				else begin
-					if (current_box_y == 9'd0) begin
-						next_box_y = current_box_y + 9'd1;
+					if (current_box_y <= 9'd0) begin
+						next_box_y = current_box_y + 9'd3;
 						next_box_vy = INCREASE;
 					end
 					else begin
-						next_box_y = current_box_y - 9'd1;
+						next_box_y = current_box_y - 9'd3;
 					end
 				end
 			end
